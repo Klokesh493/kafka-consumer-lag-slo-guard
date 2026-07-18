@@ -1,0 +1,4 @@
+consumer_group,topic,lag_messages,ingest_rate_per_min,slo_minutes
+feature-risk-prod,features.risk,12000,800,10
+search-ranking-prod,events.ranking,2500,900,8
+fraud-signals-prod,events.fraud,9000,300,20
