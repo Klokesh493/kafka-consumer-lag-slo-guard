@@ -85,3 +85,9 @@ outside this environment's verification.
 ### Limitations
 
 The verification report covers the bundled local examples. See the [case study](docs/CASE_STUDY.md) for project-specific assumptions and operating limits.
+
+## Development and security
+
+See the [developer setup, tool roles, and security checks](docs/DEVELOPMENT.md).
+
+[Local check results](reports/devsecops.md)
