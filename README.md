@@ -91,3 +91,7 @@ The verification report covers the bundled local examples. See the [case study](
 See the [developer setup, tool roles, and security checks](docs/DEVELOPMENT.md).
 
 [Local check results](reports/devsecops.md)
+
+## Runbook
+
+[Run, verify, and troubleshoot this project](docs/RUNBOOK.md)
