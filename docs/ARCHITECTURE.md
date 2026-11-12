@@ -4,14 +4,15 @@ SRE utility for AI/ML streaming platforms that flags Kafka consumer groups at ri
 
 ```mermaid
 flowchart LR
-    A["Lag, ingest rate, and freshness limit"]
-    B["Estimate lag divided by ingest rate"]
-    C{"Estimate exceeds SLO?"}
-    D["Warn or page at 1.5× threshold"]
-    E["Omit OK group from output"]
-    A --> B --> C
-    C -->|Yes| D
-    C -->|No| E
+    Legacy["Legacy lag export"] --> CLI["Original CLI estimate"]
+    Snapshots["Snapshots with ingest and consume rates"] --> Net["Calculate net drain rate"]
+    Net --> Stall{"Backlog with no positive net drain?"}
+    Stall -->|Yes| Blocked["Stalled"]
+    Stall -->|No| ETA["Estimate minutes to clear backlog"]
+    ETA --> SLO["Compare with freshness SLO"]
+    SLO --> Status["OK, warn, or page"]
+    Blocked --> Report["Time-ordered JSON evidence"]
+    Status --> Report
 ```
 
 ## Operational boundaries

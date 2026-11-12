@@ -1,0 +1,4 @@
+minute,consumer_group,topic,lag_messages,ingest_rate_per_min,consume_rate_per_min,slo_minutes
+0,ranking,features,12000,800,800,10
+5,ranking,features,12000,800,1400,10
+10,ranking,features,3000,800,1400,10

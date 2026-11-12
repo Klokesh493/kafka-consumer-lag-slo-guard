@@ -2,7 +2,7 @@
 
 ## Business problem
 
-SRE utility for AI/ML streaming platforms that flags Kafka consumer groups at risk of missing freshness SLOs.
+A consumer group can process messages without shrinking its backlog. Responders need to distinguish stalled recovery from a backlog that will clear within the freshness target.
 
 ## Reproduce the workflow
 
@@ -24,3 +24,19 @@ Sample command and local checks passed.
 ## Limitations
 
 The documented run evaluates the bundled sample locally. Results depend on the quality and scope of the input. The demo makes no live infrastructure changes.
+
+## Incident replay
+
+A freshness alert is harder to interpret when a backlog stays flat. The
+consumer may be processing messages at the same rate producers create
+them, so it can serve traffic while making no progress toward recovery.
+
+Run `python3 replay.py examples/replay.csv`. The first snapshot reports
+`stalled` because consume and ingest rates are both 800 messages/minute.
+At minute five the consumer drains 600 messages/minute net, but a backlog of
+12,000 still projects 20 minutes to recover against a 10-minute SLO.
+At minute ten the projection drops to five minutes and the result is `ok`.
+
+The estimates assume constant rates within each snapshot. The replay reads
+synthetic CSV and sends no pages. The original CLI continues to accept the
+older CSV format, which has no measured consumer throughput.
