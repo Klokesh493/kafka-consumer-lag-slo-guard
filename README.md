@@ -1,32 +1,12 @@
 # Kafka Consumer Lag SLO Guard
 
-SRE utility for AI/ML streaming platforms that flags Kafka consumer groups at risk of missing freshness SLOs.
-
-Focus: Kafka, platform engineering, model-feature freshness, SRE.
-
-Uses synthetic Kafka snapshots to explain freshness risk and catch-up decisions.
-
-## Run
-
-```bash
-python3 lag_guard.py sample_lag.csv
-```
-
-## Verify
-
-```bash
-python3 -m unittest discover . -v
-```
-
-## Local verification
-
-Run `make verify` with Make and Python 3 installed. The target runs the documented sample through the project CLI. It also runs the existing Python unit tests.
-
-## Business problem
-
 A consumer group can process messages without shrinking its backlog. Responders need to distinguish stalled recovery from a backlog that will clear within the freshness target.
 
-## Project walkthrough
+## What I built
+
+I built a Kafka freshness review CLI and a replay mode for time-ordered snapshots. Replay subtracts ingest rate from consumer throughput and marks an existing backlog stalled when net drain is zero or negative. Otherwise it compares the estimated catch-up time to the SLO.
+
+## How it works
 
 ```mermaid
 flowchart LR
@@ -41,57 +21,43 @@ flowchart LR
     Status --> Report
 ```
 
-[Architecture and data flow](docs/ARCHITECTURE.md) · [Business problem, demo, and verification](docs/CASE_STUDY.md)
+[Architecture](docs/ARCHITECTURE.md) · [Decision rules and source](docs/RULES.md)
 
-## Replay an incident
+## Tools used
 
-Run `python3 replay.py examples/replay.csv` to see a stalled group, an SLO breach, and recovery in one replay. `make verify` tests all three outcomes.
+| Tool | Role in this repository |
+| --- | --- |
+| Python | [lag_guard.py](lag_guard.py) implements the CLI and decision rules. Uses `csv` to read tabular exports. |
+| Make | Runs the documented example and the local `unittest` suite. |
+| Python replay runner | Compares actual stdout with the checked-in baseline fixtures. |
+| Ruff and Bandit | Developer lint and static security checks through `make check`. |
 
 ## Run the project
 
-### Local setup
-
-Run `make verify` with Python 3 and Make installed.
-
-### CLI usage
+Use Python 3.10+ and Make. From the repository root:
 
 ```sh
 python3 lag_guard.py sample_lag.csv
 ```
 
-### Replay usage
+The basic sample emits warnings for two groups. Replay adds measured drain rate and decision evidence for each snapshot. [Full expected output](examples/Demo%201.stdout.txt)
 
-Run `make replay` to replay the checked-in inputs. The runner compares stdout with the baseline, reports differences, and exits nonzero on regression.
+### Additional replay cases
 
-[Replay cases](examples/replay-manifest.json) · [Generated report](reports/replay.md) · [Rule implementation](docs/RULES.md)
+- **Demo 2** · `python3 replay.py examples/replay.csv` · [Expected output](examples/Demo%202.stdout.txt)
 
-### Run tests
-
-[Verification report](reports/verification.md) · [Business problem, sample behavior, and limitations](docs/CASE_STUDY.md)
-
-### Container demo
-
-The [Dockerfile](infra/Dockerfile) packages the CLI and its synthetic input.
-Runs the synthetic stall, breach, and recovery timeline.
+## Verify the project
 
 ```sh
-docker build -f infra/Dockerfile -t kafka-consumer-lag-slo-guard:local .
-docker run --rm --network none kafka-consumer-lag-slo-guard:local
+make verify
+make replay
 ```
 
-Local Python verification passed. The container build and execution were
-outside this environment's verification.
+`make replay` checks the recorded cases and exits nonzero if the output changes.
+See the [developer guide](docs/DEVELOPMENT.md) for the pinned lint and security tools.
 
-### Limitations
+## Operating limits
 
-The verification report covers the bundled local examples. See the [case study](docs/CASE_STUDY.md) for project-specific assumptions and operating limits.
+The basic CLI uses ingest rate as a proxy. Use replay with measured throughput for recovery estimates. Both modes work on local exports and send no pages.
 
-## Development and security
-
-See the [developer setup, tool roles, and security checks](docs/DEVELOPMENT.md).
-
-[Local check results](reports/devsecops.md)
-
-## Runbook
-
-[Run, verify, and troubleshoot this project](docs/RUNBOOK.md)
+[Case study](docs/CASE_STUDY.md) · [Operator runbook](docs/RUNBOOK.md) · [Verification report](reports/verification.md)
