@@ -1,0 +1,2 @@
+warn: feature-risk-prod on features.risk needs 15.0m
+warn: fraud-signals-prod on events.fraud needs 30.0m

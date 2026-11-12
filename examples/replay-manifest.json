@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Demo 1",
+    "args": [
+      "lag_guard.py",
+      "sample_lag.csv"
+    ],
+    "expected": "examples/Demo 1.stdout.txt"
+  },
+  {
+    "name": "Demo 2",
+    "args": [
+      "replay.py",
+      "examples/replay.csv"
+    ],
+    "expected": "examples/Demo 2.stdout.txt"
+  }
+]
