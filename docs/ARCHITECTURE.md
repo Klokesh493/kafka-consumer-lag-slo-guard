@@ -4,11 +4,14 @@ SRE utility for AI/ML streaming platforms that flags Kafka consumer groups at ri
 
 ```mermaid
 flowchart LR
-    N0["sample_lag.csv"]
-    N1["lag_guard.py"]
-    N2["minutes to catch up / lag status / risky groups"]
-    N3["Result for operator review"]
-    N0 --> N1 --> N2 --> N3
+    A["Lag, ingest rate, and freshness limit"]
+    B["Estimate lag divided by ingest rate"]
+    C{"Estimate exceeds SLO?"}
+    D["Warn or page at 1.5× threshold"]
+    E["Omit OK group from output"]
+    A --> B --> C
+    C -->|Yes| D
+    C -->|No| E
 ```
 
 ## Operational boundaries
