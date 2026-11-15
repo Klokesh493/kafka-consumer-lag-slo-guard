@@ -2,6 +2,8 @@
 
 A consumer group can process messages without shrinking its backlog. Responders need to distinguish stalled recovery from a backlog that will clear within the freshness target.
 
+[Skills and verification](docs/ENGINEERING_NOTES.md)
+
 ## What I built
 
 I built a Kafka freshness review CLI and a replay mode for time-ordered snapshots. Replay subtracts ingest rate from consumer throughput and marks an existing backlog stalled when net drain is zero or negative. Otherwise it compares the estimated catch-up time to the SLO.
